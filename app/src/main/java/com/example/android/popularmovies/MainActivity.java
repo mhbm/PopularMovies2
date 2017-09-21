@@ -6,6 +6,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +22,9 @@ import com.example.android.popularmovies.data.MovieModel;
 import com.example.android.popularmovies.utilities.NetworkUtils;
 import com.example.android.popularmovies.utilities.OpenMovieJsonUtils;
 
+import org.json.JSONException;
+
+import java.io.IOException;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler {
@@ -60,23 +64,13 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
         if (savedInstanceState != null) {
             moveListSaved = savedInstanceState.getStringArray("EXTRA_MOVIES");
-            MovieModel[] movieList = new MovieModel[moveListSaved.length];
-            for (int i = 0; i < moveListSaved.length; i++) {
-
-                MovieModel aux = new MovieModel();
-                String[] testSplit = moveListSaved[i].split(" - ");
-                aux.setPoster_path(testSplit[0]);
-                aux.setTitle(testSplit[1]);
-                aux.setOverview(testSplit[2]);
-                aux.setRelease_date(testSplit[3]);
-                aux.setVote_average(testSplit[4]);
-                movieList[i] = aux;
-
-            }
-            mMovieAdapter.setMovieList(movieList);
+            setMoviestoShow(moveListSaved);
         } else {
             loadMovies();
         }
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
     }
 
     private void loadMovies() {
@@ -95,8 +89,28 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         Context context = this;
         Class destinationClass = MovieDetailActivity.class;
         Intent intentToStartMovieDetailActivity = new Intent(context, destinationClass);
+        openDetailFilm(movie);
         intentToStartMovieDetailActivity.putExtra("MovieModel", movie);
         startActivity(intentToStartMovieDetailActivity);
+    }
+
+    private void openDetailFilm(MovieModel movie) {
+        URL movieDetailURL = NetworkUtils.buildUrlMovieDetail(Integer.parseInt(movie.getId()));
+
+        System.out.println(movieDetailURL.toString());
+        try {
+            String jsonMovieResponse = NetworkUtils
+                    .getResponseFromHttpUrl(movieDetailURL);
+
+            String runtimeMovie = OpenMovieJsonUtils.getRuntimeMovie(jsonMovieResponse);
+
+            movie.setRuntime(runtimeMovie);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void showMovieView() {
@@ -163,6 +177,23 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         return super.onOptionsItemSelected(item);
     }
 
+    private void setMoviestoShow(String[] moveListSaved) {
+        String charSpecial = "###";
+        MovieModel[] movieList = new MovieModel[moveListSaved.length];
+        for (int i = 0; i < moveListSaved.length; i++) {
+            MovieModel aux = new MovieModel();
+            String[] testSplit = moveListSaved[i].split(charSpecial);
+            aux.setPoster_path(testSplit[0]);
+            aux.setTitle(testSplit[1]);
+            aux.setOverview(testSplit[2]);
+            aux.setRelease_date(testSplit[3]);
+            aux.setVote_average(testSplit[4]);
+            aux.setId(testSplit[5]);
+            movieList[i] = aux;
+        }
+        mMovieAdapter.setMovieList(movieList);
+    }
+
     private class FetchMovieTask extends AsyncTask<String, Void, String[]> {
 
         @Override
@@ -183,8 +214,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             }
 
             try {
-
-
                 String jsonMovieResponse = NetworkUtils
                         .getResponseFromHttpUrl(weatherRequestUrl);
 
@@ -206,20 +235,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
             if (movieData != null) {
                 showMovieView();
-                MovieModel[] movieList = new MovieModel[movieData.length];
-                for (int i = 0; i < movieData.length; i++) {
-
-                    MovieModel aux = new MovieModel();
-                    String[] testSplit = movieData[i].split(" - ");
-                    aux.setPoster_path(testSplit[0]);
-                    aux.setTitle(testSplit[1]);
-                    aux.setOverview(testSplit[2]);
-                    aux.setRelease_date(testSplit[3]);
-                    aux.setVote_average(testSplit[4]);
-                    movieList[i] = aux;
-
-                }
-                mMovieAdapter.setMovieList(movieList);
+                setMoviestoShow(movieData);
             } else {
                 showErrorMessage();
             }

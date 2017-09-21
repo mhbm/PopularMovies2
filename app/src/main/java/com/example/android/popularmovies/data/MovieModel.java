@@ -7,19 +7,23 @@ import java.io.Serializable;
  */
 
 @SuppressWarnings("DefaultFileTemplate")
-public class MovieModel implements Serializable{
+public class MovieModel implements Serializable {
+    private static final String BASE_URL = "http://image.tmdb.org/t/p/";
+    private static final String SIZE_IMAGE = "w185/";
+    private String id;
+    private String runtime;
     private String poster_path;
     private String overview;
     private String release_date;
     private String title;
     private String vote_average;
 
-    private static final String BASE_URL = "http://image.tmdb.org/t/p/";
+    public String getId() {
+        return id;
+    }
 
-    private static final String SIZE_IMAGE = "w185/";
-
-    public MovieModel() {
-
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getPoster_path() {
@@ -64,5 +68,13 @@ public class MovieModel implements Serializable{
 
     public String takeUrlImage() {
         return BASE_URL + SIZE_IMAGE + "/" + this.getPoster_path();
+    }
+
+    public String getRuntime() {
+        return runtime;
+    }
+
+    public void setRuntime(String runtime) {
+        this.runtime = runtime;
     }
 }

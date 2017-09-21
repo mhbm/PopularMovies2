@@ -27,6 +27,8 @@ public class NetworkUtils {
 
     private final static String PARAM_QUERY = "api_key";
 
+    private final static String movieDetail = "https://api.themoviedb.org/3/movie/" ;
+
 
     public static URL buildUrl(int option) {
         Uri builtUri = null;
@@ -57,6 +59,7 @@ public class NetworkUtils {
             Scanner scanner = new Scanner(in);
             scanner.useDelimiter("\\A");
             boolean hasInput = scanner.hasNext();
+            Log.d("TESTE", "openDetailFilm: " + hasInput);
             if (hasInput) {
                 return scanner.next();
             } else {
@@ -65,6 +68,26 @@ public class NetworkUtils {
         } finally {
             urlConnection.disconnect();
         }
+
+    }
+
+    public static URL buildUrlMovieDetail(int id) {
+
+        String urlMovieDetail = movieDetail + String.valueOf(id);
+
+        Uri builtUri = null;
+
+            builtUri = Uri.parse(urlMovieDetail).buildUpon()
+                    .appendQueryParameter(PARAM_QUERY, APIKEY).build();
+
+        URL url = null;
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        Log.d(TAG, "Built URI MovieDetail " + url);
+        return url;
     }
 
 }

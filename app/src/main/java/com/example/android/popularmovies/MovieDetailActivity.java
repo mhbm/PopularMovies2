@@ -14,7 +14,7 @@ import com.squareup.picasso.Picasso;
  */
 
 @SuppressWarnings("DefaultFileTemplate")
-public class MovieDetailActivity  extends AppCompatActivity{
+public class MovieDetailActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,23 +26,25 @@ public class MovieDetailActivity  extends AppCompatActivity{
         ImageView mImageDisplay = (ImageView) findViewById(R.id.iv_movie_image);
         TextView mRatingDisplay = (TextView) findViewById(R.id.tv_movie_vote_average);
         TextView mReleaseDate = (TextView) findViewById(R.id.tv_movie_release_date);
+        TextView mRuntimeDisplay = (TextView) findViewById(R.id.tv_movie_runtime);
 
         Intent intentThatStartedThisActivity = getIntent();
 
         if (intentThatStartedThisActivity != null) {
 
-                MovieModel movie = (MovieModel) intentThatStartedThisActivity.getSerializableExtra("MovieModel");
+            MovieModel movie = (MovieModel) intentThatStartedThisActivity.getSerializableExtra("MovieModel");
             String mMovieTitle = movie.getTitle();
             String mMovieOverview = movie.getOverview();
             String mMovieVoteAverage = movie.getVote_average();
-            String mMovieDate = movie.getRelease_date();
+            String[] mMovieDate = movie.getRelease_date().split("-");
+            String mMovieRuntime = movie.getRuntime();
 
-                mTitleDisplay.setText(mMovieTitle);
-                mOverviewDisplay.setText(mMovieOverview);
-                Picasso.with(this).load(movie.takeUrlImage()).into(mImageDisplay);
-                mRatingDisplay.setText(mMovieVoteAverage);
-                mReleaseDate.setText(mMovieDate);
-
+            mTitleDisplay.setText(mMovieTitle);
+            mOverviewDisplay.setText(mMovieOverview);
+            Picasso.with(this).load(movie.takeUrlImage()).into(mImageDisplay);
+            mRatingDisplay.setText(mMovieVoteAverage + "/10");
+            mReleaseDate.setText(mMovieDate[0]);
+            mRuntimeDisplay.setText(mMovieRuntime + " min");
 
 
         }

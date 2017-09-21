@@ -22,6 +22,8 @@ public final class OpenMovieJsonUtils {
 
         parsedMovieData = new String[movieArray.length()];
 
+        String charSpecial = "###";
+
         for (int i = 0; i < movieArray.length(); i++) {
 
             JSONObject movie = movieArray.getJSONObject(i);
@@ -30,12 +32,20 @@ public final class OpenMovieJsonUtils {
             movieGet.setPoster_path(movie.getString("poster_path"));
             movieGet.setTitle(movie.getString("title"));
             movieGet.setOverview(movie.getString("overview"));
-            movieGet.setRelease_date(movie.getString("release_date"));
             movieGet.setVote_average(movie.getString("vote_average"));
+            movieGet.setRelease_date(movie.getString("release_date"));
+            movieGet.setId(movie.getString("id"));
 
-            parsedMovieData[i] = movieGet.getPoster_path() + " - " + movieGet.getTitle() + " - " + movieGet.getOverview() + " - " + movieGet.getRelease_date() + " - " + movieGet.getVote_average();
+            parsedMovieData[i] = movieGet.getPoster_path() + charSpecial + movieGet.getTitle() + charSpecial + movieGet.getOverview() + charSpecial + movieGet.getRelease_date() + charSpecial + movieGet.getVote_average() + charSpecial + movieGet.getId();
 
         }
         return parsedMovieData;
     }
+
+
+    public static String getRuntimeMovie(String movieJsonStr) throws JSONException {
+        JSONObject movieJson = new JSONObject(movieJsonStr);
+        return movieJson.getString("runtime");
+    }
+
 }
