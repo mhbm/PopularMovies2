@@ -6,6 +6,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 /**
  * Created by Mateus Macedo on 31/07/17.
  */
@@ -46,6 +48,23 @@ public final class OpenMovieJsonUtils {
     public static String getRuntimeMovie(String movieJsonStr) throws JSONException {
         JSONObject movieJson = new JSONObject(movieJsonStr);
         return movieJson.getString("runtime");
+    }
+
+    public static ArrayList<String> getVideoMovie(String movieJsonStr) throws JSONException {
+        ArrayList<String> parsedMovieVideo = new ArrayList<>();
+
+        JSONObject movieJson = new JSONObject(movieJsonStr);
+
+        JSONArray movieArray = movieJson.getJSONArray("results");
+
+        for (int i = 0; i < movieArray.length(); i++) {
+
+            JSONObject movie = movieArray.getJSONObject(i);
+
+            parsedMovieVideo.add(movie.getString("key"));
+
+        }
+        return parsedMovieVideo;
     }
 
 }

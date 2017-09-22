@@ -1,6 +1,7 @@
 package com.example.android.popularmovies.data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * Created by Mateus Macedo on 28/07/17.
@@ -17,6 +18,15 @@ public class MovieModel implements Serializable {
     private String release_date;
     private String title;
     private String vote_average;
+    private ArrayList<String> keysVideos;
+
+    public ArrayList<String> getKeysVideos() {
+        return keysVideos;
+    }
+
+    public void setKeysVideos(ArrayList<String> keysVideos) {
+        this.keysVideos = keysVideos;
+    }
 
     public String getId() {
         return id;

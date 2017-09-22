@@ -26,6 +26,7 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler {
 
@@ -90,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         Class destinationClass = MovieDetailActivity.class;
         Intent intentToStartMovieDetailActivity = new Intent(context, destinationClass);
         openDetailFilm(movie);
+        openVideoFilm(movie);
         intentToStartMovieDetailActivity.putExtra("MovieModel", movie);
         startActivity(intentToStartMovieDetailActivity);
     }
@@ -105,6 +107,26 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             String runtimeMovie = OpenMovieJsonUtils.getRuntimeMovie(jsonMovieResponse);
 
             movie.setRuntime(runtimeMovie);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void openVideoFilm(MovieModel movie) {
+        URL movieDetailURL = NetworkUtils.buildUrlVideoMovie(Integer.parseInt(movie.getId()));
+
+        System.out.println(movieDetailURL.toString());
+
+        try {
+            String jsonMovieResponse = NetworkUtils
+                    .getResponseFromHttpUrl(movieDetailURL);
+
+            ArrayList<String> keysVideosMovie = OpenMovieJsonUtils.getVideoMovie(jsonMovieResponse);
+
+            movie.setKeysVideos(keysVideosMovie);
 
         } catch (JSONException e) {
             e.printStackTrace();

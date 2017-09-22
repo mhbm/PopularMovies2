@@ -90,4 +90,24 @@ public class NetworkUtils {
         return url;
     }
 
+    public static URL buildUrlVideoMovie(int id) {
+
+        String urlMovieDetail = movieDetail + String.valueOf(id) + "/videos";
+
+        Uri builtUri = null;
+
+        builtUri = Uri.parse(urlMovieDetail).buildUpon()
+                .appendQueryParameter(PARAM_QUERY, APIKEY).build();
+
+        URL url = null;
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        Log.d(TAG, "Built URI VideoMovie " + url);
+        return url;
+
+    }
+
 }

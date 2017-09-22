@@ -3,6 +3,9 @@ package com.example.android.popularmovies;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,6 +30,9 @@ public class MovieDetailActivity extends AppCompatActivity {
         TextView mRatingDisplay = (TextView) findViewById(R.id.tv_movie_vote_average);
         TextView mReleaseDate = (TextView) findViewById(R.id.tv_movie_release_date);
         TextView mRuntimeDisplay = (TextView) findViewById(R.id.tv_movie_runtime);
+        WebView displayYoutubeVideo = (WebView) findViewById(R.id.vv_movie_trailer1);
+        WebView displayYoutubeVideo2 = (WebView) findViewById(R.id.vv_movie_trailer2);
+        WebView displayYoutubeVideo3 = (WebView) findViewById(R.id.vv_movie_trailer3);
 
         Intent intentThatStartedThisActivity = getIntent();
 
@@ -46,9 +52,34 @@ public class MovieDetailActivity extends AppCompatActivity {
             mReleaseDate.setText(mMovieDate[0]);
             mRuntimeDisplay.setText(mMovieRuntime + " min");
 
+            for (int i = 0; i < movie.getKeysVideos().size(); i++) {
+                String trailerYoutube = "https://www.youtube.com/embed/" + movie.getKeysVideos().get(i);
+                String frameVideo = "<html><iframe width=\"match_parent\" height=\"match_parent\" src=\"" + trailerYoutube +"\" frameborder=\"0\" allowfullscreen></iframe></body></html>";
+
+                switch (i)  {
+                    case 0:
+                        WebSettings webSettings = displayYoutubeVideo . getSettings ();
+                        webSettings.setJavaScriptEnabled(true);
+                        displayYoutubeVideo.loadData(frameVideo, "text/html", "utf-8");
+                        break;
+                    case 1:
+                        WebSettings webSettings2 = displayYoutubeVideo2 . getSettings ();
+                        webSettings2.setJavaScriptEnabled(true);
+                        displayYoutubeVideo2.loadData(frameVideo, "text/html", "utf-8");
+                        break;
+                    case 2:
+                        WebSettings webSettings3 = displayYoutubeVideo3 . getSettings ();
+                        webSettings3.setJavaScriptEnabled(true);
+                        displayYoutubeVideo3.loadData(frameVideo, "text/html", "utf-8");
+                        break;
+                }
+            }
+
+            if (movie.getKeysVideos().size() < 3) {
+                displayYoutubeVideo3.setVisibility(View.INVISIBLE);
+            }
 
         }
-
 
     }
 
