@@ -18,7 +18,7 @@ import java.util.Scanner;
 public class NetworkUtils {
 
     private static final String TAG = NetworkUtils.class.getSimpleName();
-
+    
     private final static String APIKEY = "ENTER YOU APIKEY";
 
     private final static String popularURL = "https://api.themoviedb.org/3/movie/popular";
@@ -106,6 +106,26 @@ public class NetworkUtils {
             e.printStackTrace();
         }
         Log.d(TAG, "Built URI VideoMovie " + url);
+        return url;
+
+    }
+
+    public static URL buildUrlReviewMovie(int id) {
+
+        String urlMovieDetail = movieDetail + String.valueOf(id) + "/reviews";
+
+        Uri builtUri = null;
+
+        builtUri = Uri.parse(urlMovieDetail).buildUpon()
+                .appendQueryParameter(PARAM_QUERY, APIKEY).build();
+
+        URL url = null;
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        Log.d(TAG, "Built URI Reviews Movie " + url);
         return url;
 
     }

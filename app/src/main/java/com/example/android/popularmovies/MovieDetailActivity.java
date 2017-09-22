@@ -7,12 +7,15 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.android.popularmovies.adapter.ReviewAdapter;
 import com.example.android.popularmovies.data.MovieModel;
 import com.squareup.picasso.Picasso;
 
@@ -45,6 +48,9 @@ public class MovieDetailActivity extends AppCompatActivity implements
 
     private Context mContext;
 
+    private ReviewAdapter mAdapter;
+    private RecyclerView mReviewList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,12 +70,18 @@ public class MovieDetailActivity extends AppCompatActivity implements
         displayYoutubeVideo2.setVisibility(View.INVISIBLE);
         displayYoutubeVideo3.setVisibility(View.INVISIBLE);
 
-
         Intent intentThatStartedThisActivity = getIntent();
 
         if (intentThatStartedThisActivity != null) {
             movie = (MovieModel) intentThatStartedThisActivity.getSerializableExtra("MovieModel");
             mContext = this;
+            mReviewList = (RecyclerView) findViewById(R.id.rv_movies_review);
+            LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+            mReviewList.setLayoutManager(layoutManager);
+            mReviewList.setHasFixedSize(true);
+            System.out.println(movie);
+            mAdapter = new ReviewAdapter(movie);
+            mReviewList.setAdapter(mAdapter);
         }
 
         /*

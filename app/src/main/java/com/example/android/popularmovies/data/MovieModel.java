@@ -19,6 +19,15 @@ public class MovieModel implements Serializable {
     private String title;
     private String vote_average;
     private ArrayList<String> keysVideos;
+    private ArrayList<ReviewModel> reviewMovie;
+
+    public ArrayList<ReviewModel> getReviewMovie() {
+        return reviewMovie;
+    }
+
+    public void setReviewMovie(ArrayList<ReviewModel> reviewMovie) {
+        this.reviewMovie = reviewMovie;
+    }
 
     public ArrayList<String> getKeysVideos() {
         return keysVideos;

@@ -1,6 +1,7 @@
 package com.example.android.popularmovies.utilities;
 
 import com.example.android.popularmovies.data.MovieModel;
+import com.example.android.popularmovies.data.ReviewModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -65,6 +66,21 @@ public final class OpenMovieJsonUtils {
 
         }
         return parsedMovieVideo;
+    }
+
+    public static ArrayList<ReviewModel> getReviewMovie(String movieJsonStr) throws JSONException {
+        ArrayList<ReviewModel> parsedMovieReview = new ArrayList<>();
+        JSONObject movieJson = new JSONObject(movieJsonStr);
+        JSONArray movieArray = movieJson.getJSONArray("results");
+
+        for (int i = 0; i < movieArray.length(); i++) {
+            JSONObject movie = movieArray.getJSONObject(i);
+            ReviewModel review = new ReviewModel();
+            review.setAuthor(movie.getString("author"));
+            review.setContent(movie.getString("content"));
+            parsedMovieReview.add(review);
+        }
+        return parsedMovieReview;
     }
 
 }

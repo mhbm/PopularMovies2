@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.example.android.popularmovies.adapter.MovieAdapter;
 import com.example.android.popularmovies.data.MovieModel;
+import com.example.android.popularmovies.data.ReviewModel;
 import com.example.android.popularmovies.utilities.NetworkUtils;
 import com.example.android.popularmovies.utilities.OpenMovieJsonUtils;
 
@@ -92,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         Intent intentToStartMovieDetailActivity = new Intent(context, destinationClass);
         openDetailFilm(movie);
         openVideoFilm(movie);
+        openReviewFilm(movie);
         intentToStartMovieDetailActivity.putExtra("MovieModel", movie);
         startActivity(intentToStartMovieDetailActivity);
     }
@@ -118,8 +120,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     private void openVideoFilm(MovieModel movie) {
         URL movieDetailURL = NetworkUtils.buildUrlVideoMovie(Integer.parseInt(movie.getId()));
 
-        System.out.println(movieDetailURL.toString());
-
         try {
             String jsonMovieResponse = NetworkUtils
                     .getResponseFromHttpUrl(movieDetailURL);
@@ -127,6 +127,24 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             ArrayList<String> keysVideosMovie = OpenMovieJsonUtils.getVideoMovie(jsonMovieResponse);
 
             movie.setKeysVideos(keysVideosMovie);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void openReviewFilm(MovieModel movie) {
+        URL movieDetailURL = NetworkUtils.buildUrlReviewMovie(Integer.parseInt(movie.getId()));
+
+        try {
+            String jsonMovieResponse = NetworkUtils
+                    .getResponseFromHttpUrl(movieDetailURL);
+
+            ArrayList<ReviewModel> keysReviewMovie = OpenMovieJsonUtils.getReviewMovie(jsonMovieResponse);
+
+            movie.setReviewMovie(keysReviewMovie);
 
         } catch (JSONException e) {
             e.printStackTrace();
