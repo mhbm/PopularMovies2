@@ -9,13 +9,11 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.popularmovies.adapter.ReviewAdapter;
+import com.example.android.popularmovies.adapter.VideoAdapter;
 import com.example.android.popularmovies.data.MovieModel;
 import com.squareup.picasso.Picasso;
 
@@ -41,15 +39,14 @@ public class MovieDetailActivity extends AppCompatActivity implements
     private TextView mRatingDisplay;
     private TextView mReleaseDate;
     private TextView mRuntimeDisplay;
-    private WebView displayYoutubeVideo;
-    private WebView displayYoutubeVideo2;
-    private WebView displayYoutubeVideo3;
     private MovieModel movie;
 
     private Context mContext;
 
     private ReviewAdapter mAdapter;
+    private VideoAdapter mVideoAdapter;
     private RecyclerView mReviewList;
+    private RecyclerView mReviewVideo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,13 +59,7 @@ public class MovieDetailActivity extends AppCompatActivity implements
         mRatingDisplay = (TextView) findViewById(R.id.tv_movie_vote_average);
         mReleaseDate = (TextView) findViewById(R.id.tv_movie_release_date);
         mRuntimeDisplay = (TextView) findViewById(R.id.tv_movie_runtime);
-        displayYoutubeVideo = (WebView) findViewById(R.id.vv_movie_trailer1);
-        displayYoutubeVideo2 = (WebView) findViewById(R.id.vv_movie_trailer2);
-        displayYoutubeVideo3 = (WebView) findViewById(R.id.vv_movie_trailer3);
 
-        displayYoutubeVideo.setVisibility(View.INVISIBLE);
-        displayYoutubeVideo2.setVisibility(View.INVISIBLE);
-        displayYoutubeVideo3.setVisibility(View.INVISIBLE);
 
         Intent intentThatStartedThisActivity = getIntent();
 
@@ -76,12 +67,19 @@ public class MovieDetailActivity extends AppCompatActivity implements
             movie = (MovieModel) intentThatStartedThisActivity.getSerializableExtra("MovieModel");
             mContext = this;
             mReviewList = (RecyclerView) findViewById(R.id.rv_movies_review);
+            mReviewVideo = (RecyclerView) findViewById(R.id.rv_movie_video);
             LinearLayoutManager layoutManager = new LinearLayoutManager(this);
             mReviewList.setLayoutManager(layoutManager);
             mReviewList.setHasFixedSize(true);
+            LinearLayoutManager layoutManager2 = new LinearLayoutManager(this);
+
+            mReviewVideo.setLayoutManager(layoutManager2);
+            mReviewVideo.setHasFixedSize(true);
             System.out.println(movie);
             mAdapter = new ReviewAdapter(movie);
+            mVideoAdapter = new VideoAdapter(movie);
             mReviewList.setAdapter(mAdapter);
+            mReviewVideo.setAdapter(mVideoAdapter);
         }
 
         /*
@@ -153,32 +151,7 @@ public class MovieDetailActivity extends AppCompatActivity implements
     public void onLoadFinished(Loader<ArrayList<String>> loader, ArrayList<String> data) {
 
         makeDetailMovie();
-        if (data != null) {
 
-            for (int i = 0; i < data.size(); i++) {
-                switch (i) {
-                    case 0:
-                        WebSettings webSettings = displayYoutubeVideo.getSettings();
-                        webSettings.setJavaScriptEnabled(true);
-                        displayYoutubeVideo.loadData(data.get(i), "text/html", "utf-8");
-                        displayYoutubeVideo.setVisibility(View.VISIBLE);
-                        break;
-                    case 1:
-                        WebSettings webSettings2 = displayYoutubeVideo2.getSettings();
-                        webSettings2.setJavaScriptEnabled(true);
-                        displayYoutubeVideo2.loadData(data.get(i), "text/html", "utf-8");
-                        displayYoutubeVideo2.setVisibility(View.VISIBLE);
-                        break;
-                    case 2:
-                        WebSettings webSettings3 = displayYoutubeVideo3.getSettings();
-                        webSettings3.setJavaScriptEnabled(true);
-                        displayYoutubeVideo3.loadData(data.get(i), "text/html", "utf-8");
-                        displayYoutubeVideo3.setVisibility(View.VISIBLE);
-                        break;
-                }
-            }
-
-        }
 
     }
 
