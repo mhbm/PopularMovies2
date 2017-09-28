@@ -15,7 +15,7 @@ import com.example.android.popularmovies.data.MovieModel;
 import java.util.ArrayList;
 
 /**
- * Created by lsitec101.macedo on 26/09/17.
+ * Created by Mateus Macedo on 26/09/17.
  */
 
 public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.NumberViewHolder> {

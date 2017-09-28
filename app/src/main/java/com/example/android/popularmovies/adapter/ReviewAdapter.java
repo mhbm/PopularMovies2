@@ -17,10 +17,8 @@ import com.example.android.popularmovies.data.MovieModel;
 
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.NumberViewHolder> {
 
-    private MovieModel mMovie;
-
     private static final String TAG = ReviewAdapter.class.getSimpleName();
-
+    private MovieModel mMovie;
     private int mNumberItems;
 
     public ReviewAdapter(MovieModel movie) {
@@ -37,7 +35,6 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.NumberView
 
         View view = inflater.inflate(layoutIdForListItem, viewGroup, shouldAttachToParentImmediately);
         NumberViewHolder viewHolder = new NumberViewHolder(view);
-
         return viewHolder;
     }
 
@@ -53,14 +50,12 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.NumberView
     }
 
     class NumberViewHolder extends RecyclerView.ViewHolder {
-        
+
         TextView listItemAuthor;
         TextView listItemContent;
 
-
         public NumberViewHolder(View itemView) {
             super(itemView);
-
             listItemAuthor = (TextView) itemView.findViewById(R.id.tv_authorReview);
             listItemContent = (TextView) itemView.findViewById(R.id.tv_contentReview);
         }
@@ -70,7 +65,4 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.NumberView
             listItemContent.setText(String.valueOf(mMovie.getReviewMovie().get(listIndex).getContent()));
         }
     }
-
 }
-
-

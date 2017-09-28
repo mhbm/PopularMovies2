@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 /**
- * Created by lsitec101.macedo on 26/09/17.
+ * Created by Mateus Macedo on 26/09/17.
  */
 
 public class MovieDbHelper extends SQLiteOpenHelper {
@@ -36,28 +36,6 @@ public class MovieDbHelper extends SQLiteOpenHelper {
 
         sqLiteDatabase.execSQL(SQL_CREATE_MOVIES_TABLE);
 
-
-//        // Create a table to trailer data
-//        final String SQL_CREATE_TRAILER_TABLE = "CREATE TABLE " + TrailerContract.TrailerEntry.TABLE_NAME + " (" +
-//                TrailerContract.TrailerEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-//                TrailerContract.TrailerEntry.COLUMN_KEY + " TEXT NOT NULL, " +
-//                TrailerContract.TrailerEntry.COLUMN_ID_MOVIE + " INTEGER NOT NULL "+
-////                " FOREIGN KEY ("+ TrailerContract.TrailerEntry.COLUMN_ID_MOVIE +") REFERENCES "+ MovieContract.MovieEntry.TABLE_NAME +" ("+ MovieContract.MovieEntry._ID +")" +
-//                "); ";
-//
-//        sqLiteDatabase.execSQL(SQL_CREATE_TRAILER_TABLE);
-//
-//        // Create a table to review data
-//        final String SQL_CREATE_REVIEW_TABLE = "CREATE TABLE " + ReviewContract.ReviewEntry.TABLE_NAME + " (" +
-//                ReviewContract.ReviewEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-//                ReviewContract.ReviewEntry.COLUMN_AUTHOR + " TEXT NOT NULL, " +
-//                ReviewContract.ReviewEntry.COLUMN_CONTENT + " TEXT NOT NULL, " +
-//                ReviewContract.ReviewEntry.COLUMN_ID_MOVIE + " INTEGER NOT NULL, " +
-//                ReviewContract.ReviewEntry.COLUMN_TIMESTAMP + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
-////                " FOREIGN KEY ("+ ReviewContract.ReviewEntry.COLUMN_ID_MOVIE +") REFERENCES "+ MovieContract.MovieEntry.TABLE_NAME +" ("+ MovieContract.MovieEntry._ID +") " +
-//                "); ";
-//
-//        sqLiteDatabase.execSQL(SQL_CREATE_REVIEW_TABLE);
     }
 
     @Override

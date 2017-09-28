@@ -3,7 +3,7 @@ package com.example.android.popularmovies.data;
 import java.io.Serializable;
 
 /**
- * Created by mateus.macedo on 22/09/17.
+ * Created by Mateus Macedo on 22/09/17.
  */
 
 public class ReviewModel implements Serializable {

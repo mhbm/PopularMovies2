@@ -3,6 +3,7 @@ package com.example.android.popularmovies;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -52,7 +53,7 @@ public class MovieDetailActivity extends AppCompatActivity implements
     private VideoAdapter mVideoAdapter;
     private RecyclerView mReviewList;
     private RecyclerView mReviewVideo;
-    ImageButton test;
+    private ImageButton mFavoriteButton;
 
     boolean isEnable;
 
@@ -68,11 +69,13 @@ public class MovieDetailActivity extends AppCompatActivity implements
         mReleaseDate = (TextView) findViewById(R.id.tv_movie_release_date);
         mRuntimeDisplay = (TextView) findViewById(R.id.tv_movie_runtime);
 
-        test = (ImageButton) findViewById(R.id.favorite);
+        mFavoriteButton = (ImageButton) findViewById(R.id.favorite);
         Intent intentThatStartedThisActivity = getIntent();
+
 
         if (intentThatStartedThisActivity != null) {
             movie = (MovieModel) intentThatStartedThisActivity.getSerializableExtra("MovieModel");
+            verifyFilmInContentProvider(movie);
             mContext = this;
             mReviewList = (RecyclerView) findViewById(R.id.rv_movies_review);
             mReviewVideo = (RecyclerView) findViewById(R.id.rv_movie_video);
@@ -88,7 +91,6 @@ public class MovieDetailActivity extends AppCompatActivity implements
             mReviewList.setAdapter(mAdapter);
             mReviewVideo.setAdapter(mVideoAdapter);
 
-            
         }
 
         /*
@@ -112,8 +114,6 @@ public class MovieDetailActivity extends AppCompatActivity implements
 
     }
 
-
-
     private void makeDetailMovie() {
         String mMovieTitle = movie.getTitle();
         String mMovieOverview = movie.getOverview();
@@ -123,7 +123,6 @@ public class MovieDetailActivity extends AppCompatActivity implements
         Picasso.with(mContext).load(movie.takeUrlImage()).into(mImageDisplay);
         mTitleDisplay.setText(mMovieTitle);
         mOverviewDisplay.setText(mMovieOverview);
-
         mRatingDisplay.setText(mMovieVoteAverage + "/10");
         mReleaseDate.setText(mMovieDate[0]);
         mRuntimeDisplay.setText(mMovieRuntime + " min");
@@ -183,18 +182,32 @@ public class MovieDetailActivity extends AppCompatActivity implements
         // Display the URI that's returned with a Toast
         // [Hint] Don't forget to call finish() to return to MainActivity after this insert is complete
         if(uri != null) {
-            Toast.makeText(getBaseContext(), uri.toString(), Toast.LENGTH_LONG).show();
+            Toast.makeText(getBaseContext(), "Add Favorite", Toast.LENGTH_LONG).show();
         }
 
         if (isEnable){
-            test.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(),android.R.drawable.btn_star_big_off));
+            mFavoriteButton.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(),android.R.drawable.btn_star_big_off));
         }else{
-            test.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(),android.R.drawable.btn_star_big_on));
+            mFavoriteButton.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(),android.R.drawable.btn_star_big_on));
         }
         isEnable = !isEnable;
 
         // Finish activity (this returns back to MainActivity)
-        finish();
+//        finish();
+
+    }
+
+    public void verifyFilmInContentProvider(MovieModel movie) {
+        String[] args = {movie.getId()};
+        Cursor cursor = getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI, null, MovieContract.MovieEntry.COLUMN_IDMOVIE + "=?", args, MovieContract.MovieEntry.COLUMN_IDMOVIE);
+
+        if (cursor.moveToFirst() == false) {
+            mFavoriteButton.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(),android.R.drawable.btn_star_big_off));
+            isEnable = false;
+        } else {
+            mFavoriteButton.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(),android.R.drawable.btn_star_big_on));
+            isEnable = true;
+        }
 
     }
 }
