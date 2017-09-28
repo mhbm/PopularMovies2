@@ -160,29 +160,40 @@ public class MovieDetailActivity extends AppCompatActivity implements
     }
 
     public void onClickFavoriteButton(View view) {
-        // Not yet implemented
-        // Check if EditText is empty, if not retrieve input and store it in a ContentValues object
-        // If the EditText input is empty -> don't create an entry
 
-        // Insert new task data via a ContentResolver
-        // Create new empty ContentValues object
-        ContentValues contentValues = new ContentValues();
-        // Put the task description and selected mPriority into the ContentValues
-        contentValues.put(MovieContract.MovieEntry.COLUMN_NAME, movie.getTitle());
-        contentValues.put(MovieContract.MovieEntry.COLUMN_IMAGE, movie.getPoster_path());
-        contentValues.put(MovieContract.MovieEntry.COLUMN_DATE, movie.getRelease_date());
-        contentValues.put(MovieContract.MovieEntry.COLUMN_RUNTIME, movie.getRuntime());
-        contentValues.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, movie.getVote_average());
-        contentValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, movie.getOverview());
-        contentValues.put(MovieContract.MovieEntry.COLUMN_IDMOVIE, movie.getId());
+        if (!isEnable) {
 
-        // Insert the content values via a ContentResolver
-        Uri uri = getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, contentValues);
+            ContentValues contentValues = new ContentValues();
 
-        // Display the URI that's returned with a Toast
-        // [Hint] Don't forget to call finish() to return to MainActivity after this insert is complete
-        if(uri != null) {
-            Toast.makeText(getBaseContext(), "Add Favorite", Toast.LENGTH_LONG).show();
+            contentValues.put(MovieContract.MovieEntry.COLUMN_NAME, movie.getTitle());
+            contentValues.put(MovieContract.MovieEntry.COLUMN_IMAGE, movie.getPoster_path());
+            contentValues.put(MovieContract.MovieEntry.COLUMN_DATE, movie.getRelease_date());
+            contentValues.put(MovieContract.MovieEntry.COLUMN_RUNTIME, movie.getRuntime());
+            contentValues.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, movie.getVote_average());
+            contentValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, movie.getOverview());
+            contentValues.put(MovieContract.MovieEntry.COLUMN_IDMOVIE, movie.getId());
+
+            Uri uri = getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, contentValues);
+
+            if (uri != null) {
+                Toast.makeText(getBaseContext(), "Add Favorite", Toast.LENGTH_LONG).show();
+            }
+
+        } else {
+            String[] args = {movie.getId()};
+            Cursor cursor = getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI, null, MovieContract.MovieEntry.COLUMN_IDMOVIE + "=?", args, MovieContract.MovieEntry.COLUMN_IDMOVIE);
+            int idIndex = cursor.getColumnIndex(MovieContract.MovieEntry._ID);
+            cursor.moveToNext();
+            final int id = cursor.getInt(idIndex);
+
+//            System.out.println("idMovie = " + idMovie);
+            int rows = getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build(), null, null);
+            if (rows > 0) {
+                mFavoriteButton.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(),android.R.drawable.btn_star_big_off));
+                Toast.makeText(getBaseContext(), "Delete Favorite", Toast.LENGTH_LONG).show();
+            }
+
+
         }
 
         if (isEnable){
