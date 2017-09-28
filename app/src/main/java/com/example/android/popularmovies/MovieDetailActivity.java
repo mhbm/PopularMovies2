@@ -1,23 +1,28 @@
 package com.example.android.popularmovies;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.popularmovies.adapter.ReviewAdapter;
 import com.example.android.popularmovies.adapter.VideoAdapter;
+import com.example.android.popularmovies.data.MovieContract;
 import com.example.android.popularmovies.data.MovieModel;
 import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
 
 /**
  * Created by Mateus Macedo on 01/08/17.
@@ -25,7 +30,7 @@ import java.util.ArrayList;
 
 @SuppressWarnings("DefaultFileTemplate")
 public class MovieDetailActivity extends AppCompatActivity implements
-        LoaderManager.LoaderCallbacks<ArrayList<String>> {
+        LoaderManager.LoaderCallbacks<MovieModel> {
 
 
     /* A constant to save and restore the URL that is being displayed */
@@ -47,6 +52,9 @@ public class MovieDetailActivity extends AppCompatActivity implements
     private VideoAdapter mVideoAdapter;
     private RecyclerView mReviewList;
     private RecyclerView mReviewVideo;
+    ImageButton test;
+
+    boolean isEnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +68,7 @@ public class MovieDetailActivity extends AppCompatActivity implements
         mReleaseDate = (TextView) findViewById(R.id.tv_movie_release_date);
         mRuntimeDisplay = (TextView) findViewById(R.id.tv_movie_runtime);
 
-
+        test = (ImageButton) findViewById(R.id.favorite);
         Intent intentThatStartedThisActivity = getIntent();
 
         if (intentThatStartedThisActivity != null) {
@@ -72,7 +80,6 @@ public class MovieDetailActivity extends AppCompatActivity implements
             mReviewList.setLayoutManager(layoutManager);
             mReviewList.setHasFixedSize(true);
             LinearLayoutManager layoutManager2 = new LinearLayoutManager(this);
-
             mReviewVideo.setLayoutManager(layoutManager2);
             mReviewVideo.setHasFixedSize(true);
             System.out.println(movie);
@@ -80,6 +87,8 @@ public class MovieDetailActivity extends AppCompatActivity implements
             mVideoAdapter = new VideoAdapter(movie);
             mReviewList.setAdapter(mAdapter);
             mReviewVideo.setAdapter(mVideoAdapter);
+
+            
         }
 
         /*
@@ -103,6 +112,8 @@ public class MovieDetailActivity extends AppCompatActivity implements
 
     }
 
+
+
     private void makeDetailMovie() {
         String mMovieTitle = movie.getTitle();
         String mMovieOverview = movie.getOverview();
@@ -120,9 +131,9 @@ public class MovieDetailActivity extends AppCompatActivity implements
 
 
     @Override
-    public Loader<ArrayList<String>> onCreateLoader(int id, final Bundle args) {
+    public Loader<MovieModel> onCreateLoader(int id, final Bundle args) {
 
-        return new AsyncTaskLoader<ArrayList<String>>(this) {
+        return new AsyncTaskLoader<MovieModel>(this) {
             @Override
             protected void onStartLoading() {
                 if (args == null)
@@ -131,32 +142,59 @@ public class MovieDetailActivity extends AppCompatActivity implements
             }
 
             @Override
-            public ArrayList<String> loadInBackground() {
+            public MovieModel loadInBackground() {
                 if (movie == null) {
                     return null;
                 }
-
-                ArrayList<String> frameVideo = new ArrayList<String>();
-                for (int i = 0; i < movie.getKeysVideos().size(); i++) {
-                    String trailerYoutube = "https://www.youtube.com/embed/" + movie.getKeysVideos().get(i);
-                    String characterSplit = "###";
-                    frameVideo.add("<html><iframe width=\"match_parent\" height=\"match_parent\" src=\"" + trailerYoutube + "\" frameborder=\"0\" allowfullscreen></iframe></body></html>");
-                }
-                return frameVideo;
+                return movie;
             }
         };
     }
 
     @Override
-    public void onLoadFinished(Loader<ArrayList<String>> loader, ArrayList<String> data) {
-
+    public void onLoadFinished(Loader<MovieModel> loader, MovieModel data) {
         makeDetailMovie();
-
-
     }
 
     @Override
-    public void onLoaderReset(Loader<ArrayList<String>> loader) {
+    public void onLoaderReset(Loader<MovieModel> loader) {
+    }
+
+    public void onClickFavoriteButton(View view) {
+        // Not yet implemented
+        // Check if EditText is empty, if not retrieve input and store it in a ContentValues object
+        // If the EditText input is empty -> don't create an entry
+
+        // Insert new task data via a ContentResolver
+        // Create new empty ContentValues object
+        ContentValues contentValues = new ContentValues();
+        // Put the task description and selected mPriority into the ContentValues
+        contentValues.put(MovieContract.MovieEntry.COLUMN_NAME, movie.getTitle());
+        contentValues.put(MovieContract.MovieEntry.COLUMN_IMAGE, movie.getPoster_path());
+        contentValues.put(MovieContract.MovieEntry.COLUMN_DATE, movie.getRelease_date());
+        contentValues.put(MovieContract.MovieEntry.COLUMN_RUNTIME, movie.getRuntime());
+        contentValues.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, movie.getVote_average());
+        contentValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, movie.getOverview());
+        contentValues.put(MovieContract.MovieEntry.COLUMN_IDMOVIE, movie.getId());
+
+        // Insert the content values via a ContentResolver
+        Uri uri = getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, contentValues);
+
+        // Display the URI that's returned with a Toast
+        // [Hint] Don't forget to call finish() to return to MainActivity after this insert is complete
+        if(uri != null) {
+            Toast.makeText(getBaseContext(), uri.toString(), Toast.LENGTH_LONG).show();
+        }
+
+        if (isEnable){
+            test.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(),android.R.drawable.btn_star_big_off));
+        }else{
+            test.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(),android.R.drawable.btn_star_big_on));
+        }
+        isEnable = !isEnable;
+
+        // Finish activity (this returns back to MainActivity)
+        finish();
 
     }
 }

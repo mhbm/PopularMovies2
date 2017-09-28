@@ -89,6 +89,10 @@ public class MovieModel implements Serializable {
         return BASE_URL + SIZE_IMAGE + "/" + this.getPoster_path();
     }
 
+    public static String formatUrlImagetoPicasso(String path) {
+        return BASE_URL + SIZE_IMAGE + "/" + path;
+    }
+
     public String getRuntime() {
         return runtime;
     }
