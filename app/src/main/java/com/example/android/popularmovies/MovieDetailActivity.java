@@ -38,7 +38,7 @@ public class MovieDetailActivity extends AppCompatActivity implements
     private static final String SEARCH_MOVIE_URL_EXTRA = "MovieModel";
 
     private static final int MOVIE_SEARCH_LOADER = 22;
-
+    boolean isEnable;
     private TextView mTitleDisplay;
     private TextView mOverviewDisplay;
     private ImageView mImageDisplay;
@@ -46,16 +46,12 @@ public class MovieDetailActivity extends AppCompatActivity implements
     private TextView mReleaseDate;
     private TextView mRuntimeDisplay;
     private MovieModel movie;
-
     private Context mContext;
-
     private ReviewAdapter mAdapter;
     private VideoAdapter mVideoAdapter;
     private RecyclerView mReviewList;
     private RecyclerView mReviewVideo;
     private ImageButton mFavoriteButton;
-
-    boolean isEnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +81,6 @@ public class MovieDetailActivity extends AppCompatActivity implements
             LinearLayoutManager layoutManager2 = new LinearLayoutManager(this);
             mReviewVideo.setLayoutManager(layoutManager2);
             mReviewVideo.setHasFixedSize(true);
-            System.out.println(movie);
             mAdapter = new ReviewAdapter(movie);
             mVideoAdapter = new VideoAdapter(movie, mContext);
             mReviewList.setAdapter(mAdapter);
@@ -186,26 +181,21 @@ public class MovieDetailActivity extends AppCompatActivity implements
             cursor.moveToNext();
             final int id = cursor.getInt(idIndex);
 
-//            System.out.println("idMovie = " + idMovie);
             int rows = getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI.buildUpon().appendPath(String.valueOf(id)).build(), null, null);
             if (rows > 0) {
-                mFavoriteButton.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(),android.R.drawable.btn_star_big_off));
+                mFavoriteButton.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), android.R.drawable.btn_star_big_off));
                 Toast.makeText(getBaseContext(), "Delete Favorite", Toast.LENGTH_LONG).show();
             }
 
 
         }
 
-        if (isEnable){
-            mFavoriteButton.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(),android.R.drawable.btn_star_big_off));
-        }else{
-            mFavoriteButton.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(),android.R.drawable.btn_star_big_on));
+        if (isEnable) {
+            mFavoriteButton.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), android.R.drawable.btn_star_big_off));
+        } else {
+            mFavoriteButton.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), android.R.drawable.btn_star_big_on));
         }
         isEnable = !isEnable;
-
-        // Finish activity (this returns back to MainActivity)
-//        finish();
-
     }
 
     public void verifyFilmInContentProvider(MovieModel movie) {
@@ -213,10 +203,10 @@ public class MovieDetailActivity extends AppCompatActivity implements
         Cursor cursor = getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI, null, MovieContract.MovieEntry.COLUMN_IDMOVIE + "=?", args, MovieContract.MovieEntry.COLUMN_IDMOVIE);
 
         if (cursor.moveToFirst() == false) {
-            mFavoriteButton.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(),android.R.drawable.btn_star_big_off));
+            mFavoriteButton.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), android.R.drawable.btn_star_big_off));
             isEnable = false;
         } else {
-            mFavoriteButton.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(),android.R.drawable.btn_star_big_on));
+            mFavoriteButton.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), android.R.drawable.btn_star_big_on));
             isEnable = true;
         }
 

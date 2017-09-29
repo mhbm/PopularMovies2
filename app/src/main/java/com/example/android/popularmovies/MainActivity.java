@@ -111,8 +111,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
     private void openDetailFilm(MovieModel movie) {
         URL movieDetailURL = NetworkUtils.buildUrlMovieDetail(Integer.parseInt(movie.getId()));
-
-        System.out.println(movieDetailURL.toString());
         try {
             String jsonMovieResponse = NetworkUtils
                     .getResponseFromHttpUrl(movieDetailURL);
