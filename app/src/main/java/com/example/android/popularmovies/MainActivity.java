@@ -37,6 +37,8 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler, LoaderManager.LoaderCallbacks<Cursor> {
 
+    private static final int MOVIE_LOADER_ID = 0;
+    private static final String TAG = MainActivity.class.getSimpleName();
     private boolean networkStatus;
     private RecyclerView mRecyclerView;
     private MovieAdapter mMovieAdapter;
@@ -44,11 +46,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     private ProgressBar mLoadingIndicator;
     // 1 is Popular and 2 is Rating
     private int option;
-
     private String[] moveListSaved;
-
-    private static final int MOVIE_LOADER_ID = 0;
-    private static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -249,6 +247,117 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         mMovieAdapter.setMovieList(movieList);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // re-queries for all tasks
+        getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, null, this);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, final Bundle loaderArgs) {
+
+        return new AsyncTaskLoader<Cursor>(this) {
+
+            // Initialize a Cursor, this will hold all the task data
+            Cursor mTaskData = null;
+
+            // onStartLoading() is called when a loader first starts loading data
+            @Override
+            protected void onStartLoading() {
+                if (mTaskData != null) {
+                    // Delivers any previously loaded data immediately
+                    deliverResult(mTaskData);
+                } else {
+                    // Force a new load
+                    forceLoad();
+                }
+            }
+
+            // loadInBackground() performs asynchronous loading of data
+            @Override
+            public Cursor loadInBackground() {
+                // Will implement to load data
+
+                // Query and load all task data in the background; sort by priority
+                // [Hint] use a try/catch block to catch any errors in loading data
+
+                try {
+                    return getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,
+                            null,
+                            null,
+                            null,
+                            null);
+
+
+                } catch (Exception e) {
+                    Log.e(TAG, "Failed to asynchronously load data.");
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            // deliverResult sends the result of the load, a Cursor, to the registered listener
+            public void deliverResult(Cursor data) {
+                mTaskData = data;
+                super.deliverResult(data);
+            }
+        };
+
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        // Update the data that the adapter uses to create ViewHolders
+        mMovieAdapter.swapCursor(data);
+        test();
+    }
+
+    /**
+     * Called when a previously created loader is being reset, and thus
+     * making its data unavailable.
+     * onLoaderReset removes any references this activity had to the loader's data.
+     *
+     * @param loader The Loader that is being reset.
+     */
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mMovieAdapter.swapCursor(null);
+    }
+
+    public void test() {
+        Cursor mCursor = getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null);
+        int i = 0;
+        MovieModel[] movieList = new MovieModel[mCursor.getCount()];
+        while (mCursor.moveToPosition(i)) {
+            MovieModel movie = new MovieModel();
+            int idIndex = mCursor.getColumnIndex(MovieContract.MovieEntry._ID);
+            int nameIndex = mCursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_NAME);
+            int imageIndex = mCursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_IMAGE);
+            int dateIndex = mCursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_DATE);
+            int runtimeIndex = mCursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_RUNTIME);
+            int voteAverageIndex = mCursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE);
+            int overviewIndex = mCursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_OVERVIEW);
+            int idMovieIndex = mCursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_IDMOVIE);
+
+            movie.setTitle(mCursor.getString(nameIndex));
+            movie.setPoster_path(mCursor.getString(imageIndex));
+            movie.setRelease_date(mCursor.getString(dateIndex));
+            movie.setRelease_date(mCursor.getString(runtimeIndex));
+            movie.setVote_average(mCursor.getString(voteAverageIndex));
+            movie.setOverview(mCursor.getString(overviewIndex));
+            movie.setId(mCursor.getString(idMovieIndex));
+            movieList[i] = movie;
+            i++;
+        }
+        mMovieAdapter.setMovieList(movieList);
+    }
+
     private class FetchMovieTask extends AsyncTask<String, Void, String[]> {
 
         @Override
@@ -295,85 +404,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                 showErrorMessage();
             }
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        // re-queries for all tasks
-        getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, null, this);
-    }
-
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, final Bundle loaderArgs) {
-
-        return new AsyncTaskLoader<Cursor>(this) {
-
-            // Initialize a Cursor, this will hold all the task data
-            Cursor mTaskData = null;
-
-            // onStartLoading() is called when a loader first starts loading data
-            @Override
-            protected void onStartLoading() {
-                if (mTaskData != null) {
-                    // Delivers any previously loaded data immediately
-                    deliverResult(mTaskData);
-                } else {
-                    // Force a new load
-                    forceLoad();
-                }
-            }
-
-            // loadInBackground() performs asynchronous loading of data
-            @Override
-            public Cursor loadInBackground() {
-                // Will implement to load data
-
-                // Query and load all task data in the background; sort by priority
-                // [Hint] use a try/catch block to catch any errors in loading data
-
-                try {
-                    return getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,
-                            null,
-                            null,
-                            null,
-                            null);
-
-                } catch (Exception e) {
-                    Log.e(TAG, "Failed to asynchronously load data.");
-                    e.printStackTrace();
-                    return null;
-                }
-            }
-
-            // deliverResult sends the result of the load, a Cursor, to the registered listener
-            public void deliverResult(Cursor data) {
-                mTaskData = data;
-                super.deliverResult(data);
-            }
-        };
-
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        // Update the data that the adapter uses to create ViewHolders
-        mMovieAdapter.swapCursor(data);
-    }
-
-
-    /**
-     * Called when a previously created loader is being reset, and thus
-     * making its data unavailable.
-     * onLoaderReset removes any references this activity had to the loader's data.
-     *
-     * @param loader The Loader that is being reset.
-     */
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        mMovieAdapter.swapCursor(null);
     }
 
 

@@ -18,7 +18,7 @@ import java.util.Scanner;
 public class NetworkUtils {
 
     private static final String TAG = NetworkUtils.class.getSimpleName();
-
+    
     private final static String APIKEY = "ENTER YOU APIKEY";
 
     private final static String popularURL = "https://api.themoviedb.org/3/movie/popular";
