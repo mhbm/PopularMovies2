@@ -87,7 +87,7 @@ public class MovieDetailActivity extends AppCompatActivity implements
             mReviewVideo.setHasFixedSize(true);
             System.out.println(movie);
             mAdapter = new ReviewAdapter(movie);
-            mVideoAdapter = new VideoAdapter(movie);
+            mVideoAdapter = new VideoAdapter(movie, mContext);
             mReviewList.setAdapter(mAdapter);
             mReviewVideo.setAdapter(mVideoAdapter);
 

@@ -311,7 +311,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         // Update the data that the adapter uses to create ViewHolders
         mMovieAdapter.swapCursor(data);
-        test();
+        saveFavoriteMovies();
     }
 
     /**
@@ -326,7 +326,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         mMovieAdapter.swapCursor(null);
     }
 
-    public void test() {
+    public void saveFavoriteMovies() {
         Cursor mCursor = getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,
                 null,
                 null,
