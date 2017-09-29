@@ -90,7 +90,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putStringArray("EXTRA_MOVIES", moveListSaved);
+        if (option != 3)
+            outState.putStringArray("EXTRA_MOVIES", moveListSaved);
+        else
+            outState.putStringArray("EXTRA_MOVIES", saveFavoriteMovies());
+
     }
 
     @Override
@@ -311,7 +315,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         // Update the data that the adapter uses to create ViewHolders
         mMovieAdapter.swapCursor(data);
-        saveFavoriteMovies();
     }
 
     /**
@@ -326,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         mMovieAdapter.swapCursor(null);
     }
 
-    public void saveFavoriteMovies() {
+    public String[] saveFavoriteMovies() {
         Cursor mCursor = getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,
                 null,
                 null,
@@ -334,6 +337,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                 null);
         int i = 0;
         MovieModel[] movieList = new MovieModel[mCursor.getCount()];
+        String[] parsedMovieData = new String[mCursor.getCount()];
+        String charSpecial = "###";
         while (mCursor.moveToPosition(i)) {
             MovieModel movie = new MovieModel();
             int idIndex = mCursor.getColumnIndex(MovieContract.MovieEntry._ID);
@@ -348,14 +353,17 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             movie.setTitle(mCursor.getString(nameIndex));
             movie.setPoster_path(mCursor.getString(imageIndex));
             movie.setRelease_date(mCursor.getString(dateIndex));
-            movie.setRelease_date(mCursor.getString(runtimeIndex));
+            movie.setRuntime(mCursor.getString(runtimeIndex));
             movie.setVote_average(mCursor.getString(voteAverageIndex));
             movie.setOverview(mCursor.getString(overviewIndex));
             movie.setId(mCursor.getString(idMovieIndex));
             movieList[i] = movie;
+
+            parsedMovieData[i] = movie.getPoster_path() + charSpecial + movie.getTitle() + charSpecial + movie.getOverview() + charSpecial + movie.getRelease_date() + charSpecial + movie.getVote_average() + charSpecial + movie.getId();
             i++;
         }
         mMovieAdapter.setMovieList(movieList);
+        return parsedMovieData;
     }
 
     private class FetchMovieTask extends AsyncTask<String, Void, String[]> {
