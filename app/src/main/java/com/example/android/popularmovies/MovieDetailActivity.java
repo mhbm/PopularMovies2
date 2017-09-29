@@ -74,7 +74,7 @@ public class MovieDetailActivity extends AppCompatActivity implements
 
 
         if (intentThatStartedThisActivity != null) {
-            movie = (MovieModel) intentThatStartedThisActivity.getSerializableExtra("MovieModel");
+            movie = (MovieModel) intentThatStartedThisActivity.getParcelableExtra("MovieModel");
             verifyFilmInContentProvider(movie);
             mContext = this;
             mReviewList = (RecyclerView) findViewById(R.id.rv_movies_review);
@@ -100,7 +100,7 @@ public class MovieDetailActivity extends AppCompatActivity implements
 
         Bundle queryBundle = new Bundle();
 
-        queryBundle.putSerializable(SEARCH_MOVIE_URL_EXTRA, movie);
+        queryBundle.putParcelable(SEARCH_MOVIE_URL_EXTRA, movie);
 
         LoaderManager loaderManager = getSupportLoaderManager();
 

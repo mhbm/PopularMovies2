@@ -110,7 +110,7 @@
             app:layout_constraintTop_toBottomOf="@+id/iv_time_icon"
             app:layout_constraintLeft_toLeftOf="@+id/iv_time_icon"
             app:layout_constraintBottom_toBottomOf="@+id/tv_movie_vote_average"
-             />
+            />
 
         <TextView
             android:id="@+id/tv_movie_vote_average"
@@ -176,12 +176,12 @@
 
         <android.support.v7.widget.RecyclerView
             android:layout_width="wrap_content"
-            android:layout_height="300dp"
+            android:layout_height="wrap_content"
             android:id="@+id/rv_movies_review"
             app:layout_constraintTop_toBottomOf="@+id/tv_movie_review"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-             />
+            />
 
 
     </android.support.constraint.ConstraintLayout>

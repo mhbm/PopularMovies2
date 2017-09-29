@@ -1,6 +1,8 @@
 package com.example.android.popularmovies.data;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 
 /**
@@ -8,7 +10,7 @@ import java.util.ArrayList;
  */
 
 @SuppressWarnings("DefaultFileTemplate")
-public class MovieModel implements Serializable {
+public class MovieModel implements Parcelable {
     private static final String BASE_URL = "http://image.tmdb.org/t/p/";
     private static final String SIZE_IMAGE = "w185/";
     private String id;
@@ -100,4 +102,50 @@ public class MovieModel implements Serializable {
     public void setRuntime(String runtime) {
         this.runtime = runtime;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.id);
+        dest.writeString(this.runtime);
+        dest.writeString(this.poster_path);
+        dest.writeString(this.overview);
+        dest.writeString(this.release_date);
+        dest.writeString(this.title);
+        dest.writeString(this.vote_average);
+        dest.writeStringList(this.keysVideos);
+        dest.writeList(this.reviewMovie);
+    }
+
+    public MovieModel() {
+    }
+
+    protected MovieModel(Parcel in) {
+        this.id = in.readString();
+        this.runtime = in.readString();
+        this.poster_path = in.readString();
+        this.overview = in.readString();
+        this.release_date = in.readString();
+        this.title = in.readString();
+        this.vote_average = in.readString();
+        this.keysVideos = in.createStringArrayList();
+        this.reviewMovie = new ArrayList<ReviewModel>();
+        in.readList(this.reviewMovie, ReviewModel.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<MovieModel> CREATOR = new Parcelable.Creator<MovieModel>() {
+        @Override
+        public MovieModel createFromParcel(Parcel source) {
+            return new MovieModel(source);
+        }
+
+        @Override
+        public MovieModel[] newArray(int size) {
+            return new MovieModel[size];
+        }
+    };
 }
